@@ -31,13 +31,13 @@ self.addEventListener('notificationclick', function(event) {
     clients.matchAll({ type: 'window' }).then( windowClients => {
       for (var i = 0; i < windowClients.length; i++) {
         var client = windowClients[i];
-        if (client.url.includes('admin') && 'focus' in client) {
+        if (client.url.includes('index') && 'focus' in client) {
           return client.focus();
         }
       }
       // If not open, open it
       if (clients.openWindow) {
-        return clients.openWindow('./admin.v.14.html');
+        return clients.openWindow('./index.html');
       }
     })
   );
