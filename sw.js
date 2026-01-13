@@ -1,6 +1,6 @@
 const CACHE_NAME = 'tari-admin-v1';
 const ASSETS = [
-  './admin.html', // Make sure this matches your file name exactly
+  './index.html', // Make sure this matches your file name exactly
   'https://cdn.tailwindcss.com',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
