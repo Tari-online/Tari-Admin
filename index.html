@@ -2287,7 +2287,7 @@ window.addEventListener('focus', () => { fetchOrders(); });
 // 1. Register Admin Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register(' sw.js')
+        navigator.serviceWorker.register('sw.js')
             .then(reg => console.log('Admin SW Ready'))
             .catch(err => console.log('Admin SW Fail', err));
     });
