@@ -1400,12 +1400,12 @@ window.confirmPayment = async (btn) => {
 
         // 3. Award Points to User
         if (earnedPoints > 0 && order.user_id) {
-            const { data: user } = await db.from('users').select('loyalty_points').eq('id', order.user_id).single();
+            const { data: user } = await db.from('users').select('points').eq('id', order.user_id).single();
             
             if(user) {
-                const newBalance = (user.loyalty_points || 0) + earnedPoints;
+                const newBalance = (user.points || 0) + earnedPoints;
                 // Update the user's balance
-                await db.from('users').update({ lyalty_points: newBalance }).eq('id', order.user_id);
+                await db.from('users').update({ points: newBalance }).eq('id', order.user_id);
                 console.log(`Awarded ${earnedPoints} points to User ${order.user_id}`);
             }
         }
