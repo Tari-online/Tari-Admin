@@ -9676,7 +9676,6 @@ window.renderInventory = () => {
             <td class="p-4 text-xs font-bold text-slate-500">${i.category}</td>
             <td class="p-4 text-xs font-bold text-slate-500"><span class="bg-slate-100 px-2 py-1 rounded-md">${i.unit}</span></td>
             <td class="p-4 text-center">
-                            <td class="p-4 text-center">
                 <span class="font-black ${isLow ? 'text-red-500' : 'text-slate-700'}">${Number(i.stock_level).toFixed(3)*1}</span>
                 <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1 overflow-hidden">
                     <div class="${barColor} h-full" style="width: ${percent}%"></div>
