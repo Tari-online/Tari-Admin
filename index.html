@@ -6581,28 +6581,41 @@ window.delPromo = async (id) => {
     setBtnLoading(btn, false); 
 };
 
-        
-document.addEventListener('visibilitychange', async () => {
-    if (!document.hidden && db) {
-        // Kill frozen timers
+   document.addEventListener('visibilitychange', async () => {
+    if (!document.hidden && typeof db !== 'undefined' && db) {
+        // 1. Kill frozen timers
         if (typeof reconnectTimer !== 'undefined' && reconnectTimer) clearTimeout(reconnectTimer);
         if (typeof orderRefreshTimer !== 'undefined' && orderRefreshTimer) clearTimeout(orderRefreshTimer);
 
-        // Kill zombie channel
-        if (ordersChannel) {
+        // 2. Kill zombie channel
+        if (typeof ordersChannel !== 'undefined' && ordersChannel) {
             try { await db.removeChannel(ordersChannel); } catch(e) {}
             ordersChannel = null; 
         }
 
-        // Reset locks
-        isConnecting = false;
-        realtimeRetries = 0; 
+        // 3. Reset locks
+        if (typeof isConnecting !== 'undefined') isConnecting = false;
+        if (typeof realtimeRetries !== 'undefined') realtimeRetries = 0; 
 
-        // Restart
-        startOrdersRealtime();
-        fetchOrders();
+        // 4. Restart Realtime Engine
+        if (typeof startOrdersRealtime === 'function') startOrdersRealtime();
+        
+        // 5. ALWAYS fetch orders so the kitchen board/memory isn't missing tickets
+        if (typeof fetchOrders === 'function') fetchOrders();
 
-        // ✅ Re-acquire wake lock after coming back from background
+        // 🚦 6. THE SMART ROUTER: Only fetch the heavy stuff if you are actually looking at it!
+        const currentTab = localStorage.getItem('tari_active_tab') || 'dashboard';
+        
+        if (currentTab === 'dashboard' && typeof fetchDashboard === 'function') {
+            fetchDashboard();
+        } else if (currentTab === 'history' && typeof fetchHistory === 'function') {
+            window.historyOffset = 0; // Reset pagination
+            fetchHistory();
+        } else if (currentTab === 'inventory' && typeof fetchInventory === 'function') {
+            fetchInventory();
+        }
+
+        // 7. Re-acquire wake lock
         try { 
             if (navigator.wakeLock) await navigator.wakeLock.request('screen'); 
         } catch(e) {}
@@ -6611,7 +6624,7 @@ document.addEventListener('visibilitychange', async () => {
 
 window.addEventListener('freeze', () => {
     // App going to deep background — clean up cleanly
-    if (ordersChannel) {
+    if (typeof ordersChannel !== 'undefined' && ordersChannel) {
         try { db.removeChannel(ordersChannel); } catch(e) {}
         ordersChannel = null;
     }
@@ -6619,17 +6632,30 @@ window.addEventListener('freeze', () => {
 
 window.addEventListener('resume', async () => {
     // App coming back from deep freeze
-    isConnecting = false;
-    realtimeRetries = 0;
-    startOrdersRealtime();
-    fetchOrders();
-    if (typeof fetchDashboard === 'function') fetchDashboard();
-if (typeof fetchHistory === 'function') fetchHistory();
-if (typeof fetchInventory === 'function') fetchInventory(); // ✅ ADD THIS
+    if (typeof isConnecting !== 'undefined') isConnecting = false;
+    if (typeof realtimeRetries !== 'undefined') realtimeRetries = 0;
+    
+    if (typeof startOrdersRealtime === 'function') startOrdersRealtime();
+    if (typeof fetchOrders === 'function') fetchOrders();
+
+    // 🚦 FIX: Added the exact same Smart Router to the deep freeze wake-up!
+    const currentTab = localStorage.getItem('tari_active_tab') || 'dashboard';
+    
+    if (currentTab === 'dashboard' && typeof fetchDashboard === 'function') {
+        fetchDashboard();
+    } else if (currentTab === 'history' && typeof fetchHistory === 'function') {
+        window.historyOffset = 0;
+        fetchHistory();
+    } else if (currentTab === 'inventory' && typeof fetchInventory === 'function') {
+        fetchInventory();
+    }
+
     try { 
         if (navigator.wakeLock) await navigator.wakeLock.request('screen'); 
     } catch(e) {}
 });
+     
+
 
 window.addEventListener('error', () => {
   document.getElementById('preloader')?.classList.add('loaded');
