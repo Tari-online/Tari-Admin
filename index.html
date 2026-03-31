@@ -6623,6 +6623,9 @@ window.addEventListener('resume', async () => {
     realtimeRetries = 0;
     startOrdersRealtime();
     fetchOrders();
+    if (typeof fetchDashboard === 'function') fetchDashboard();
+if (typeof fetchHistory === 'function') fetchHistory();
+if (typeof fetchInventory === 'function') fetchInventory(); // ✅ ADD THIS
     try { 
         if (navigator.wakeLock) await navigator.wakeLock.request('screen'); 
     } catch(e) {}
