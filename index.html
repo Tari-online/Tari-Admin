@@ -4106,8 +4106,7 @@ window.setupInventoryRealtime = () => {
                     window.allInvItems.push(updated);
                 }
                 if (window.posInventoryCache) window.posInventoryCache.recipes = null;
-            
-       } 
+            }
 
             if (payload.eventType === 'DELETE') {
                 window.allInvItems = window.allInvItems.filter(i => i.id !== payload.old.id);
@@ -4116,7 +4115,12 @@ window.setupInventoryRealtime = () => {
             localStorage.setItem('tari_inv_backup', JSON.stringify(window.allInvItems));
             if (typeof renderInventory === 'function') renderInventory();
         })
-        .subscribe();
+        .subscribe((status) => { // ✅ ADD THIS
+            if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+                window.invListenerActive = false;
+                setTimeout(() => window.setupInventoryRealtime(), 2000); // Restart in 2s
+            }
+        });
 };
 
 function handleRealtimeError() {
