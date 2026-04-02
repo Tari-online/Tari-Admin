@@ -4099,7 +4099,17 @@ window.setupInventoryRealtime = () => {
 
             if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
                 const updated = payload.new;
+                const old = payload.old;
                 const index = window.allInvItems.findIndex(i => i.id === updated.id);
+
+                // ✅ If stock INCREASED (restocking) — fetch fresh to be safe
+                if (old && updated.stock_level > old.stock_level) {
+                    if (window.posInventoryCache) window.posInventoryCache.recipes = null;
+                    if (typeof fetchInventory === 'function') fetchInventory();
+                    return;
+                }
+
+                // Stock decreased or unchanged — just patch memory (no fetch)
                 if (index !== -1) {
                     window.allInvItems[index] = { ...window.allInvItems[index], ...updated };
                 } else {
@@ -4115,10 +4125,10 @@ window.setupInventoryRealtime = () => {
             localStorage.setItem('tari_inv_backup', JSON.stringify(window.allInvItems));
             if (typeof renderInventory === 'function') renderInventory();
         })
-        .subscribe((status) => { // ✅ ADD THIS
+        .subscribe((status) => {
             if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
                 window.invListenerActive = false;
-                setTimeout(() => window.setupInventoryRealtime(), 2000); // Restart in 2s
+                setTimeout(() => window.setupInventoryRealtime(), 2000);
             }
         });
 };
