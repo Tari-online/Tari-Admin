@@ -4105,7 +4105,9 @@ window.setupInventoryRealtime = () => {
                 } else {
                     window.allInvItems.push(updated);
                 }
-            }
+                if (window.posInventoryCache) window.posInventoryCache.recipes = null;
+            
+       } 
 
             if (payload.eventType === 'DELETE') {
                 window.allInvItems = window.allInvItems.filter(i => i.id !== payload.old.id);
@@ -8752,7 +8754,7 @@ window.checkInventoryForCart = async (cartToTest) => {
             // --- YOUR EXACT STOCK VERIFICATION (Untouched) ---
             for (const [ingId, qtyNeeded] of Object.entries(requiredStock)) {
                 const ing = inventory.find(i => i.id == ingId);
-                if (ing && ing.blocks_orders && parseFloat(ing.stock_level.toFixed(4)) < parseFloat(qtyNeeded.toFixed(4))) {
+                if (ing && parseFloat(ing.stock_level.toFixed(4)) < parseFloat(qtyNeeded.toFixed(4))) {
                     return { allowed: false, itemName: ing.name }; // Blocks checkout if ingredient is missing!
                 }
             }
