@@ -2897,8 +2897,8 @@ window.confirmPayment = async (btn) => {
 
         // --- 🚀 BRAND NEW ORDER ---
         if (id === 'POS_DRAFT' && window.posDraftSnapshot) {
-            const userId = await getOrCreatePosUser(); 
-            const payload = {
+    const userId = null;
+    const payload = {
                 items: JSON.stringify(window.posDraftSnapshot.items),
                 subtotal: window.posDraftSnapshot.subtotal,
                 total: window.posDraftSnapshot.total,
@@ -3505,7 +3505,7 @@ await Promise.all(Array.from(receiptImages).map(img => {
     });
 }));
 
-const canvas = await html2canvas(tempDiv, { scale: 1.0, useCORS: true, logging: false });
+const canvas = await html2canvas(tempDiv, { scale: 0.7, useCORS: true, logging: false, imageTimeout: 0, removeContainer: true });
         if(tempDiv && tempDiv.parentNode) document.body.removeChild(tempDiv); // Cleaned up removal check
         
         const imgData = canvas.toDataURL("image/jpeg", 0.5);
