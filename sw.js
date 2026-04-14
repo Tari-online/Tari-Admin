@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tari-pos-v42';
+const CACHE_NAME = 'tari-pos-v43';
 const CACHE_NAME_IMAGES = 'tari-images-v1'; // Separate image cache so it never gets wiped
 
 // Core app shell — everything needed to load the POS offline
