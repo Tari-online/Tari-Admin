@@ -38,7 +38,17 @@
 
 
     <style>
-        
+        /* PWA FIX: prevents backdrop-blur flicker on iOS PWA */
+#posModModal {
+    display: flex !important;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+    opacity: 0;
+}
+#posModModal.mod-open {
+    pointer-events: auto;
+    opacity: 1;
+}
         /* === FULL-WIDTH STRETCH ON ZOOM OUT === */
 @media (min-width: 1280px) {
     #tab-dashboard,
@@ -6668,7 +6678,13 @@ window.removeWebBg = async () => {
 
 
         window.toggleSidebar = () => { document.getElementById('sidebar').classList.toggle('sidebar-open'); document.getElementById('sidebar-overlay').classList.toggle('overlay-active'); };
-        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+        window.closeModal = (id) => {
+    if (id === 'posModModal') {
+        document.getElementById(id).classList.remove('mod-open');
+    } else {
+        document.getElementById(id).classList.add('hidden');
+    }
+};
         window.switchTab = (t) => { // <-- NOTICE THIS OPENING CURLY BRACE!
     
     // Save current tab to memory
@@ -11603,7 +11619,7 @@ window.openPosModModal = (item) => {
     }).join('');
 
     posCalcModTotal();
-    document.getElementById('posModModal').classList.remove('hidden');
+    document.getElementById('posModModal').classList.add('mod-open');
 };
 
 // --- HYBRID STEPPER & MATH LOGIC ---
