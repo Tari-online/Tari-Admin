@@ -12,7 +12,7 @@
 //    🔥 Added logging for cache cleanup so you can verify in DevTools
 // ═══════════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'tari-pos-v48';
+const CACHE_NAME = 'tari-pos-v49';
 const CACHE_NAME_IMAGES = 'tari-images-v1'; // Separate image cache so it never gets wiped
 
 // How long to wait for fresh HTML before falling back to cache
